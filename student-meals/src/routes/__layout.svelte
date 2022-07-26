@@ -7,7 +7,6 @@ import { userStore, getRecipes } from "$lib/store";
 /** @type {import("$lib/types").User} */
 let user;
 const unsubscribe = userStore.subscribe(u => user = u);
-$: user && getRecipes(user);
 
 function login() {
   signInWithPopup(auth, provider)
@@ -39,7 +38,7 @@ function logout() {
           </li>
         </ul>
         <ul class="navbar-nav ms-auto">
-          {#if user}
+          {#if user.loggedIn}
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="/#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
               {user.displayName}
@@ -59,5 +58,5 @@ function logout() {
 </header>
 
 <main class="p-2">
-  <slot {user} />
+  <slot />
 </main>

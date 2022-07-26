@@ -1,8 +1,9 @@
 <script>
-import { getContext } from "svelte";
+import { userStore } from "$lib/store";
 
-/** @type {import('.pnpm/@firebase+auth@0.20.5_@firebase+app@0.7.28/node_modules/@firebase/auth/dist/auth-public').User | null}*/
-const user = getContext("user");
+/** @type {import("$lib/types").User} */
+let user;
+const unsubscribe = userStore.subscribe(u => user = u);
 </script>
 
 {#if user}

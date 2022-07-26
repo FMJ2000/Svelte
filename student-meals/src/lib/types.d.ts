@@ -4,8 +4,8 @@ export type User = {
   emailVerified: boolean,
   phoneNumber: string | null,
 	photoURL: string | null,
-  recipes: Recipe[],
-  uid: string | null
+  uid: string | null,
+  loggedIn: boolean,
 };
 
 export type Recipe = {
@@ -27,4 +27,11 @@ export type Ingredient = {
 export type Step = {
   min: number,
   name: string,
+};
+
+export type RecipeUrl = {
+  user?: string,
+  ingredients?: string[],
+  from?: number,
+  to?: number,
 };
