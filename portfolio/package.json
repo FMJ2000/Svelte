@@ -1,5 +1,5 @@
 {
-	"name": "student-meals",
+	"name": "portfolio",
 	"version": "0.0.1",
 	"scripts": {
 		"dev": "vite dev",
@@ -12,12 +12,10 @@
 		"lint": "eslint ."
 	},
 	"devDependencies": {
-		"@auth0/auth0-spa-js": "^1.22.2",
 		"@sveltejs/adapter-auto": "next",
 		"@sveltejs/kit": "next",
 		"eslint": "^8.16.0",
 		"eslint-plugin-svelte3": "^4.0.0",
-		"prisma": "^4.1.1",
 		"svelte": "^3.44.0",
 		"svelte-check": "^2.7.1",
 		"typescript": "^4.7.4",

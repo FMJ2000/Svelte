@@ -2,7 +2,7 @@
 import { GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth, provider } from "$lib/firebase";
-import { userStore, getRecipes } from "$lib/store";
+import { userStore } from "$lib/store";
 
 /** @type {import("$lib/types").User} */
 let user;

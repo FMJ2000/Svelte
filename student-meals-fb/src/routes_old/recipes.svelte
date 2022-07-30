@@ -1,14 +1,14 @@
 <script context="module">
 /** @type {import("./__types/recipes").Load} */
 export async function load({ url }) {
-  const user = url.searchParams.get("user") || "";
+  const u = url.searchParams.get("u") || "";
   const ingredients = url.searchParams.get("ingredients")?.split(",").map(v => v.toLowerCase()) || [];
   const from = parseInt(url.searchParams.get("from") || "") || 0;
   const to = parseInt(url.searchParams.get("to") || "") || Date.now();
   return {
     status: 200,
     props: {
-      user,
+      u,
       ingredients,
       from,
       to
@@ -19,12 +19,13 @@ export async function load({ url }) {
 
 <script>
 import { db } from "$lib/firebase";
+import { userStore } from "$lib/store";
 
-import { collection, getDocs, query, where } from "firebase/firestore";
+import { collection, getDocs, limit, orderBy, query, where } from "firebase/firestore";
 
 
 /** @type {string} */
-export let user;
+export let u;
 /** @type {string[]} */
 export let ingredients;
 /** @type {number} */
@@ -35,10 +36,23 @@ export let to;
 let recipes = [];
 let error;
 
+/** @type {import("$lib/types").User} */
+let user;
+const unsubscribe = userStore.subscribe(u => user = u);
+
 async function getRecipes() {
   try {
-    const q = await getDocs(query(collection(db, "recipes"), where("created", ">=", from), where("created", "<", to)));
-    q.forEach((doc) => {
+    let q = query(collection(db, "recipes"),
+      orderBy("created", "asc"),
+      limit(20),
+    );
+    if (u) {
+      q = query(q, where("uid", "==", u));
+    } else {
+      q = query(q, where("created", ">=", from), where("created", "<", to));
+    }
+    const d = await getDocs(q);
+    d.forEach((doc) => {
       const data = doc.data();
       recipes = [...recipes, {
         created: data.created,
@@ -56,7 +70,7 @@ async function getRecipes() {
     error = err;
   }
 }
-getRecipes();
+$: u, ingredients, from, to, getRecipes();
 
 /** @param {import("$lib/types").Recipe} recipe */
 function ago(recipe) {
@@ -73,7 +87,7 @@ function ago(recipe) {
 </script>
 
 <p>
-recipes by {user}<br>
+recipes by {u}<br>
 using {ingredients}<br>
 in range {from} - {to}
 </p>
@@ -84,6 +98,8 @@ in range {from} - {to}
 </ul>
 
 <h4>Recipes</h4>
+
+<a class="btn btn-primary" href=`/recipes?>My recipes</a>
 
 <div class="list-group">
   {#each recipes as recipe (recipe.id)}
