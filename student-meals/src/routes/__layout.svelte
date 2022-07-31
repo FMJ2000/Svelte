@@ -1,5 +1,6 @@
 <script>
   import { onMount } from "svelte";
+  import { page } from "$app/stores";
   import { createClient, loginWithPopup } from "$lib/services/auth";
   import { isAuthenticated, user } from "$lib/stores/auth";
 
@@ -18,7 +19,7 @@
 </svelte:head>
 
 <header>
-  <nav class="navbar navbar-expand-md navbar-light bg-white border-bottom">
+  <nav class="navbar navbar-expand-md navbar-light bg-white border-bottom shadow-sm">
     <div class="container-fluid">
       <a class="navbar-brand" href="/#">Student Meals</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
@@ -27,10 +28,13 @@
       <div class="collapse navbar-collapse" id="navbarNavDropdown">
         <ul class="navbar-nav">
           <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="/">Home</a>
+            <a class="nav-link" class:active={$page.url.pathname === "/"} href="/">Home</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/recipes">Recipes</a>
+            <a class="nav-link" class:active={$page.url.pathname === "/recipes"} href="/recipes">Recipes</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" class:active={$page.url.pathname === "/recipes/create"} href="/recipes/create">Create</a>
           </li>
         </ul>
         <ul class="navbar-nav ms-auto">

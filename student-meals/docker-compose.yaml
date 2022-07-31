@@ -9,8 +9,9 @@ services:
       POSTGRES_USER: martin
       POSTGRES_PASSWORD: 031291778ab041d470564b57e3e60ddc43a66fc99e043d60906db79b46fa5fe7
     volumes:
-      #- ./init.sql:/docker-entrypoint-initdb.d/init.sql
       - data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
 
 volumes:
   data:

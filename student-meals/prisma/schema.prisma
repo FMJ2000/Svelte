@@ -9,3 +9,32 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model Recipe {
+  id String @id @default(cuid())
+  ownerId String
+  name String
+  description String
+  steps Step[]
+  ingredients Ingredient[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Step {
+  index Int
+  recipe Recipe @relation(fields: [recipeId], references: [id])
+  recipeId String
+  description String
+  duration Float
+  @@unique([recipeId, index])
+}
+
+model Ingredient {
+  id String @id @default(cuid())
+  recipe Recipe @relation(fields: [recipeId], references: [id])
+  recipeId String
+  name String
+  amount Float
+  unit String
+}
