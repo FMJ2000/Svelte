@@ -2,6 +2,8 @@ export type User = {
   id: string,
   name: string,
   email: string,
+  verified: boolean,
+  picture: string,
   recipes: Recipe[],
   ratings: Rating[],
 };
@@ -11,6 +13,7 @@ export type Recipe = {
   userId: string | undefined,
   name: string,
   description: string,
+  picture: string,
   steps: Step[],
   ingredients: Ingredient[],
   createdAt?: string,

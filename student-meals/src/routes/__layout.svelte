@@ -1,7 +1,7 @@
 <script>
   import { onMount } from "svelte";
   import { page } from "$app/stores";
-  import { createClient, loginWithPopup } from "$lib/services/auth";
+  import { createClient, loginWithPopup, setUser } from "$lib/services/auth";
   import { isAuthenticated, user } from "$lib/stores/auth";
 
   /** @type {import(".pnpm/@auth0+auth0-spa-js@1.22.2/node_modules/@auth0/auth0-spa-js/dist/typings/Auth0Client").default} */
@@ -9,8 +9,8 @@
 
   onMount(async () => {
     auth0Client = await createClient();
+    await setUser(auth0Client);
     isAuthenticated.set(await auth0Client.isAuthenticated());
-    user.set(await auth0Client.getUser() || {});
   })
 </script>
 

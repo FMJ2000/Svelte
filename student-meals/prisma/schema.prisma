@@ -14,6 +14,8 @@ model User {
   id String @id
   name String
   email String
+  verified Boolean
+  picture String
   recipes Recipe[]
   ratings Rating[]
 }
@@ -24,6 +26,7 @@ model Recipe {
   userId String
   name String
   description String
+  picture String
   steps Step[]
   ingredients Ingredient[]
   ratings Rating[]

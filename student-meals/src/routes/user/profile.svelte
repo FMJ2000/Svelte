@@ -10,14 +10,14 @@
       <img src={$user.picture} alt="profile" class="rounded-circle">
       <div class="flex-grow-1 px-2">
         <p>
-          <span class="text-muted">name: </span>{$user.nickname}<br>
+          <span class="text-muted">name: </span>{$user.name}<br>
           <span class="text-muted">email: </span>{$user.email}
-          {#if $user.email_verified}
+          {#if $user.verified}
             <i class="fa-solid fa-check text-success" />
           {:else}
             <i class="fa-solid fa-exclamation text-danger" />
           {/if}<br>
-          <span class="text-muted">id: </span>{$user.sub}
+          <span class="text-muted">id: </span>{$user.id}
         </p>
       </div>
     </div>

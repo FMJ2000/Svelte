@@ -4,11 +4,19 @@
 
   /** @type {import("$lib/global").Recipe} */
   let recipe = {
-    ownerId: $user.sub,
+    userId: $user.id,
     name: "",
     description: "",
-    steps: [],
-    ingredients: [],
+    picture: `https://picsum.photos/id/${Math.floor(Math.random()*1000)}/128/128`,
+    steps: [{
+      description: "",
+      duration: 1.0,
+    }],
+    ingredients: [{
+      name: "",
+      amount: 1.0,
+      unit: "p",
+    }],
   }
 
   /** @type {Promise<Response> | null} */
@@ -22,90 +30,99 @@
     .then((res) => res.json());
   }
 
-  function addStep() {
-    recipe.steps = [...recipe.steps, {
-      description: "",
-      duration: 1.0,
-    }];
-    setTimeout(() => document.getElementById(`st${recipe.steps.length-1}`)?.focus(), 100);
+  /** @param {number} index */
+  function addStep(index) {
+    if (recipe.steps.length-1 === index) {
+      recipe.steps = [...recipe.steps, {
+        description: "",
+        duration: 1.0,
+      }];
+    }
+    //setTimeout(() => document.getElementById(`st${recipe.steps.length-1}`)?.focus(), 100);
   }
 
-  function addIngredient() {
-    recipe.ingredients = [...recipe.ingredients, {
-      name: "",
-      amount: 1.0,
-      unit: "p",
-    }];
-    setTimeout(() => document.getElementById(`in${recipe.ingredients.length-1}`)?.focus(), 100);
+  /** @param {number} index */
+  function addIngredient(index) {
+    if (recipe.ingredients.length-1 === index) {
+      recipe.ingredients = [...recipe.ingredients, {
+        name: "",
+        amount: 1.0,
+        unit: "p",
+      }];
+    }
+    //setTimeout(() => document.getElementById(`in${recipe.ingredients.length-1}`)?.focus(), 100);
   }
 </script>
 
 {#if isAuthenticated}
   <div class="container p-2">
-    <div class="card">
+    <div class="card shadow-sm mx-auto" style="max-width:48rem;">
       <div class="card-body">
         <form on:submit|preventDefault={handleSubmit}>
-          <h4 class="card-title">Create Recipe</h4>
-          <div class="mb-2">
-            <label for="name" class="form-label">Name</label>
-            <input class="form-control" type="text" placeholder="Recipe name" bind:value={recipe.name} required>
-          </div>
-          <div class="mb-4">
-            <label for="name" class="form-label">Description</label>
-            <input class="form-control" type="text" placeholder="Recipe description" bind:value={recipe.description}>
-          </div>
-          <p>Recipe has {recipe.steps.length} steps and {recipe.ingredients.length} ingredients</p>
-          <div class="row">
-            <div class="col-lg-7 col-xl-8 text-center">
-              <ul class="list-group list-group-flush px-1">
-                <li class="list-group-item"><b>Steps</b></li>
-                {#if recipe.steps.length == 0} No steps yet {/if}
-                {#each recipe.steps as step (step)}
-                  <li class="list-group-item">
-                    <div class="input-group">
-                      <span class="input-group-text">{recipe.steps.indexOf(step) + 1}.</span>
-                      <textarea class="form-control" id={`st${recipe.steps.indexOf(step)}`} type="text" placeholder="Description" bind:value={step.description} required />
-                      <input class="form-control flex-grow-0" style="min-width:5rem;" type="number" placeholder="Duration" bind:value={step.duration} min="0" max="720">
-                      <span class="input-group-text">min</span>
-                      <button class="btn btn-outline-danger" type="button" on:click={() => recipe.steps = recipe.steps.filter((s) => s != step)}>
-                        <i class="fa-solid fa-trash" />
-                      </button> 
-                    </div>
-                  </li>
-                {/each}
-              </ul>
-              <button type="button" class="btn btn-sm btn-outline-success" on:click={addStep}>
-                <i class="fa-solid fa-plus" /> step
-              </button>
+          <div class="d-flex mb-2">
+            <div>
+              <img src={recipe.picture} alt="recipe" class="rounded">
             </div>
-            <div class="col-lg-5 col-xl-4 text-center">
-              <ul class="list-group list-group-flush px-1">
-                <li class="list-group-item"><b>Ingredients</b></li>
-                {#if recipe.ingredients.length == 0} No ingredients yet {/if}
-                {#each recipe.ingredients as ingredient (ingredient)}
-                  <li class="list-group-item">
-                    <div class="input-group">
-                      <input class="form-control" id={`in${recipe.ingredients.indexOf(ingredient)}`} type="text" placeholder="Name" bind:value={ingredient.name} required>
-                      <input class="form-control flex-grow-0" style="min-width:5rem;" type="number" placeholder="Amount" bind:value={ingredient.amount} min="0">
-                      <select class="form-select flex-grow-0" style="min-width:5rem;" aria-label="Unit" bind:value={ingredient.unit}>
-                        <option selected value="ml">ml</option>
-                        <option selected value="g">g</option>
-                        <option selected value="p">p</option>
-                      </select>
-                      <button class="btn btn-outline-danger" type="button" on:click={() => recipe.ingredients = recipe.ingredients.filter((s) => s != ingredient)}>
-                        <i class="fa-solid fa-trash" />
-                      </button> 
-                    </div>
-                  </li>
-                {/each}
-              </ul>
-              <button type="button" class="btn btn-sm btn-outline-success" on:click={addIngredient}>
-                <i class="fa-solid fa-plus" /> ingredient
-              </button>
+            <div class="mx-2 flex-grow-1 row">
+              <div class="card-title">
+                <label class="visually-hidden" for="name">Recipe name</label>
+                <input class="form-control-plaintext form-control-lg bg-light px-1" type="text" id="name" placeholder="Recipe name" required>
+              </div>
+              <div class="card-subtitle">
+                <label for="description" class="visually-hidden">Recipe description</label>
+                <textarea class="form-control-plaintext bg-light px-1" placeholder="Recipe name" bind:value={recipe.name} required />
+              </div>
             </div>
           </div>
+          <ul class="list-group list-group-flush px-1" style="max-width:32rem;">
+            <li class="list-group-item">
+              <h5>Ingredients</h5>
+              <small class="text-muted">Add name, amount and unit</small>
+            </li>
+            {#each recipe.ingredients as ingredient (ingredient)}
+              <li class="list-group-item d-flex">
+                <div class="input-group">
+                  <input class="form-control form-control-plaintext bg-light px-1" id={`in${recipe.ingredients.indexOf(ingredient)}`} type="text" placeholder="Name" bind:value={ingredient.name} required on:input={() => addIngredient(recipe.ingredients.indexOf(ingredient))}>
+                  <input class="form-control form-control-plaintext bg-light flex-grow-0" style="min-width:3rem;" type="number" placeholder="Amount" bind:value={ingredient.amount} min="0">
+                  <select class="form-select bg-light flex-grow-0" style="min-width:3rem;" aria-label="Unit" bind:value={ingredient.unit}>
+                    <option selected value="ml">ml</option>
+                    <option selected value="g">g</option>
+                    <option selected value="p">p</option>
+                  </select>
+                </div>
+                <div class="my-auto">
+                  <button class="btn btn-sm btn-outline-danger" type="button" on:click={() => { if (recipe.steps.length > 1) recipe.ingredients = recipe.ingredients.filter((s) => s != ingredient) }}>
+                    <i class="fa-solid fa-trash" />
+                  </button> 
+                </div>
+              </li>
+            {/each}
+          </ul>
+          <ul class="list-group list-group-flush px-1">
+            <li class="list-group-item">
+              <h5>Steps</h5>
+              <small class="text-muted">Add description and duration in minutes</small>
+            </li>
+            {#each recipe.steps as step (step)}
+              <li class="list-group-item d-flex">
+                <span class="my-auto me-2">{recipe.steps.indexOf(step) + 1}.</span>
+                <div class="input-group">
+                  <input class="form-control form-control-plaintext bg-light px-1" rows={1} id={`st${recipe.steps.indexOf(step)}`} type="text" placeholder="Description" bind:value={step.description} required on:input={() => addStep(recipe.steps.indexOf(step))}>
+                  <input class="form-control form-control-plaintext bg-light flex-grow-0" style="min-width:3rem;" type="number" placeholder="min" bind:value={step.duration} min="0" max="720">
+                </div>
+                <span class="my-auto mx-2">min</span>
+                <div class="my-auto">
+                  <button class="btn btn-sm btn-outline-danger" type="button" on:click={() => { if (recipe.steps.length > 1) recipe.steps = recipe.steps.filter((s) => s != step) }}>
+                    <i class="fa-solid fa-trash" />
+                  </button> 
+                </div>
+              </li>
+            {/each}
+          </ul>
           <div class="mt-4">
-            <button type="submit" class="btn btn-primary" class:disabled={!recipe.steps.length} data-bs-toggle="modal" data-bs-target="#saveModal">Create</button>
+            <button type="submit" class="btn btn-success" class:disabled={!recipe.steps.length} data-bs-toggle="modal" data-bs-target="#saveModal">
+              <i class="fa-solid fa-plus me-2" />Create
+            </button>
             <button type="button" class="btn btn-light" on:click={() => { 
               if (confirm("Are you sure you want to discard the recipe?")) goto("/");
             }}>Cancel</button>
@@ -115,7 +132,7 @@
     </div>
   </div>
 
-  <div class="modal fade" id="saveModal" tabindex="-1" aria-hidden="true">
+  <div class="modal fade" id="saveModal" tabindex="-1" role="dialog">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
@@ -141,3 +158,10 @@
 {:else}
   You need to log in to create recipes
 {/if}
+
+<style>
+  select {
+    border: none;
+    padding: 6px 0px;
+  }
+</style>

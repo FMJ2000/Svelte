@@ -1,5 +1,6 @@
 <script>
   import { onMount } from "svelte";
+  import { user } from "$lib/stores/auth";
 
   /** @type {Promise<import("$lib/global").Recipe[]>} */
   let loadRecipes;
@@ -35,7 +36,7 @@
             {#each recipes as recipe}
               <a href="/recipes/{recipe.id}" class="list-group-item list-group-item-action">
                 <div class="d-flex">
-                  <img src="https://picsum.photos/id/{Math.floor(Math.random()*1000)}/100/64" alt="random pic" class="rounded">
+                  <img src={recipe.picture} alt="recipe" class="rounded">
                   <div class="mx-2">
                     <h5>{recipe.name}</h5>
                     <p class="mb-0">{recipe.description}</p>
@@ -55,3 +56,4 @@
     </div>
   </div>
 </div>
+{JSON.stringify($user)}

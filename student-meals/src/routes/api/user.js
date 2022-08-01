@@ -14,6 +14,6 @@ export async function POST({ request }) {
   });
   return {
     status: 200,
-    body: { user },
+    body: { ...user },
   };
 }
