@@ -1,6 +1,14 @@
+export type User = {
+  id: string,
+  name: string,
+  email: string,
+  recipes: Recipe[],
+  ratings: Rating[],
+};
+
 export type Recipe = {
   id?: string,
-  ownerId: string | undefined,
+  userId: string | undefined,
   name: string,
   description: string,
   steps: Step[],
@@ -12,6 +20,7 @@ export type Step = {
   index?: number,
   description: string,
   duration: number,
+  complete?: boolean,
 };
 
 export type Ingredient = {
@@ -19,4 +28,11 @@ export type Ingredient = {
   name: string,
   amount: number,
   unit: "ml" | "g" | "p",
+};
+
+export type Rating = {
+  userId: string,
+  recipeId: string,
+  stars: number,
+  comment: string,
 };

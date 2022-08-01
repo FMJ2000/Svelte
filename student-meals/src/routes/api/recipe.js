@@ -5,7 +5,6 @@ const prisma = new PrismaClient();
 export async function POST({ request }) {
   /** @type {any} */
   const data = await request.json();
-  console.log(data);
   data.steps = { create: data.steps.map((step, index) => { return {...step, index: index}; }) };
   data.ingredients = { create: data.ingredients };
   /** @type {import("$lib/global").Recipe} */
