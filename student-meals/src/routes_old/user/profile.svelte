@@ -1,5 +1,30 @@
+<script context="module">
+  import { browser } from "$app/env";
+  import { PrismaClient } from "@prisma/client";
+
+  /** @type {import("../../../.svelte-kit/types/src/routes/user/__types/profile").Load}*/
+  export async function load({ session }) {
+    if (!browser) {
+      const prisma = new PrismaClient();
+      const recipes = await prisma.recipe.findMany({
+        where: {
+          userId: session.user,
+        }
+      });
+      return {
+        status: 200,
+        props: {
+          id: recipes,
+        }
+      };
+    }
+  }
+</script>
+
 <script>
   import { user } from "$lib/stores/auth";
+
+  export let id;
 </script>
 
 <h4>Profile</h4>
@@ -23,3 +48,4 @@
     </div>
   </div>
 </div>
+{id}

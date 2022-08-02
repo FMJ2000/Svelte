@@ -47,6 +47,9 @@
       <div class="card-body">
         <h5 class="card-title">Ingredients</h5>
         <ul class="list-group list-group-flush">
+          {#if recipe.ingredients.length === 0}
+            <li class="list-group-item">No ingredients</li>
+          {/if}
           {#each recipe.ingredients as ingredient}
             <li class="list-group-item d-flex">
               {ingredient.name}

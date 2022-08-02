@@ -22,7 +22,7 @@ model User {
 
 model Recipe {
   id String @id @default(cuid())
-  user User @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
   name String
   description String
@@ -36,7 +36,7 @@ model Recipe {
 
 model Step {
   index Int
-  recipe Recipe @relation(fields: [recipeId], references: [id])
+  recipe Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
   recipeId String
   description String
   duration Float
@@ -45,7 +45,7 @@ model Step {
 
 model Ingredient {
   id String @id @default(cuid())
-  recipe Recipe @relation(fields: [recipeId], references: [id])
+  recipe Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
   recipeId String
   name String
   amount Float
@@ -53,9 +53,9 @@ model Ingredient {
 }
 
 model Rating {
-  user User @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
-  recipe Recipe @relation(fields: [recipeId], references: [id])
+  recipe Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
   recipeId String
   stars Int
   comment String

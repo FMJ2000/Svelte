@@ -20,3 +20,18 @@ export async function POST({ request }) {
     body: { recipe },
   };
 }
+
+/** @type {import("./__types/recipe").RequestHandler} */
+export async function DELETE({ request }) {
+  /** @type {any} */
+  const data = await request.json();
+  const recipes = await prisma.recipe.delete({
+    where: {
+      id: data.id,
+    },
+  });
+  return {
+    status: 200,
+  };
+}
+

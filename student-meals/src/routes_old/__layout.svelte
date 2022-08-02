@@ -1,55 +1,18 @@
 <script>
-import { onMount } from "svelte";
-import { page } from "$app/stores";
-import createAuth0Client from "@auth0/auth0-spa-js";
-import config from "$lib/config";
-import { user } from "$lib/stores";
+  import { onMount } from "svelte";
+  import { page, session } from "$app/stores";
+  import { createClient, loginWithPopup, setUser } from "$lib/service";
+  import { isAuthenticated, user } from "$lib/stores/auth";
 
-/** @type {import(".pnpm/@auth0+auth0-spa-js@1.22.2/node_modules/@auth0/auth0-spa-js/dist/typings/Auth0Client").default} */
-let client;
-/** @type {import(".pnpm/@auth0+auth0-spa-js@1.22.2/node_modules/@auth0/auth0-spa-js/dist/typings/global").User} */
-let authUser;
-$: setUser(authUser);
+  /** @type {import(".pnpm/@auth0+auth0-spa-js@1.22.2/node_modules/@auth0/auth0-spa-js/dist/typings/Auth0Client").default} */
+  let auth0Client;
 
-onMount(async () => {
-  client = await createAuth0Client({
-    domain: config.domain,
-    client_id: config.clientId,
-  });
-  authUser = await client.getUser() || {};
-});
-
-async function loginWithPopup() {
-  try {
-    await client.loginWithPopup();
-    authUser = await client.getUser() || {};
-  } catch (e) {
-    console.error(e);
-  }
-}
-
-/** @param {import(".pnpm/@auth0+auth0-spa-js@1.22.2/node_modules/@auth0/auth0-spa-js/dist/typings/global").User} authUser */
-async function setUser(authUser) {
-  if (authUser?.sub) {
-    const response = await fetch("/api/users", {
-      method: "POST",
-      body: JSON.stringify({
-        id: authUser.sub,
-        name: authUser.nickname,
-        email: authUser.email,
-        verified: authUser.email_verified,
-        picture: authUser.picture,
-      }),
-      headers: { "content-type": "application/json" },
-    });
-    const dbUser = await response.json();
-    user.set(dbUser);
-  } else {
-    user.set(null);
-  }
-}
+  onMount(async () => {
+    auth0Client = await createClient();
+    await setUser(auth0Client);
+    $session.user = $user.id;
+  })
 </script>
-
 
 <svelte:head>
   <title>Student Meals</title>
@@ -63,7 +26,7 @@ async function setUser(authUser) {
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarNavDropdown">
-        {#if $user}
+        {#if $isAuthenticated}
           <ul class="navbar-nav">
             <li class="nav-item">
               <a class="nav-link" class:active={$page.url.pathname === "/"} href="/">Home</a>
@@ -77,18 +40,18 @@ async function setUser(authUser) {
           </ul>
         {/if}
         <ul class="navbar-nav ms-auto">
-          {#if $user}
+          {#if $isAuthenticated}
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="/#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
               {$user.name}
             </a>
             <ul class="dropdown-menu" aria-labelledby="profileDropdown">  
               <li><a class="dropdown-item" href="/user/profile">Profile</a></li>
-              <li><a class="dropdown-item" on:click={() => client.logout({ returnTo: window.location.origin })} href="/#">Logout</a></li>
+              <li><a class="dropdown-item" on:click={() => auth0Client.logout({ returnTo: window.location.origin })} href="/#">Logout</a></li>
             </ul>
           </li>
           {:else}
-          <li class="nav-item"><a class="nav-link" on:click={loginWithPopup} href="/#">Login</a></li>
+          <li class="nav-item"><a class="nav-link" on:click={() => loginWithPopup(auth0Client, {})} href="/#">Login</a></li>
           {/if}
         </ul>
       </div>
@@ -97,7 +60,7 @@ async function setUser(authUser) {
 </header>
 
 <main class="p-2">
-  {#if $user}
+  {#if $isAuthenticated}
     <slot />
   {:else}
     <div class="container p-2 d-flex">
