@@ -1,9 +1,9 @@
 <script>
 import { onMount } from "svelte";
-import { page } from "$app/stores";
 import createAuth0Client from "@auth0/auth0-spa-js";
 import config from "$lib/config";
 import { user } from "$lib/stores";
+import Navbar from "$lib/components/Navbar.svelte";
 
 /** @type {import(".pnpm/@auth0+auth0-spa-js@1.22.2/node_modules/@auth0/auth0-spa-js/dist/typings/Auth0Client").default} */
 let client;
@@ -19,7 +19,7 @@ onMount(async () => {
   authUser = await client.getUser() || {};
 });
 
-async function loginWithPopup() {
+async function login() {
   try {
     await client.loginWithPopup();
     authUser = await client.getUser() || {};
@@ -28,10 +28,24 @@ async function loginWithPopup() {
   }
 }
 
+async function logout() {
+  try {
+    await client.logout({ returnTo: window.location.origin });
+    authUser = await client.getUser() || {};
+    await fetch("/api/logout", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+    });
+    user.set(null);
+  } catch (e) {
+    console.error(e);
+  }
+}
+
 /** @param {import(".pnpm/@auth0+auth0-spa-js@1.22.2/node_modules/@auth0/auth0-spa-js/dist/typings/global").User} authUser */
 async function setUser(authUser) {
   if (authUser?.sub) {
-    const response = await fetch("/api/users", {
+    const response = await fetch("/api/login", {
       method: "POST",
       body: JSON.stringify({
         id: authUser.sub,
@@ -44,58 +58,12 @@ async function setUser(authUser) {
     });
     const dbUser = await response.json();
     user.set(dbUser);
-  } else {
-    user.set(null);
   }
 }
 </script>
 
 
-<svelte:head>
-  <title>Student Meals</title>
-</svelte:head>
-
-<header>
-  <nav class="navbar navbar-expand-md navbar-light bg-white border-bottom shadow-sm">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="/#">Student Meals</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNavDropdown">
-        {#if $user}
-          <ul class="navbar-nav">
-            <li class="nav-item">
-              <a class="nav-link" class:active={$page.url.pathname === "/"} href="/">Home</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" class:active={$page.url.pathname === `/user/${$user.id}/recipes/`} href="/user/{$user.id}/recipes">My Recipes</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" class:active={$page.url.pathname === `/user/${$user.id}/recipes/create`} href="/user/{$user.id}/recipes/create">Create</a>
-            </li>
-          </ul>
-        {/if}
-        <ul class="navbar-nav ms-auto">
-          {#if $user}
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="/#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              {$user.name}
-            </a>
-            <ul class="dropdown-menu" aria-labelledby="profileDropdown">  
-              <li><a class="dropdown-item" href="/user/profile">Profile</a></li>
-              <li><a class="dropdown-item" on:click={() => client.logout({ returnTo: window.location.origin })} href="/#">Logout</a></li>
-            </ul>
-          </li>
-          {:else}
-          <li class="nav-item"><a class="nav-link" on:click={loginWithPopup} href="/#">Login</a></li>
-          {/if}
-        </ul>
-      </div>
-    </div>
-  </nav>
-</header>
-
+<Navbar {login} {logout}/>
 <main class="p-2">
   {#if $user}
     <slot />

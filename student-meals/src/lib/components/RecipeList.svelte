@@ -1,5 +1,5 @@
 <script>
-import { user } from "$lib/stores/auth";
+import { user } from "$lib/stores";
 
   /** @type {import("$lib/global").Recipe[]} */
   export let recipes;

@@ -4,14 +4,14 @@ const prisma = new PrismaClient();
 /** @type {import("./__types/[id]").RequestHandler} */
 export async function GET({ params }) {
   try {
-    const recipes = await prisma.recipe.findUnique({
+    const recipe = await prisma.recipe.findUnique({
       where: {
         id: params.id,
       }
     });
     return {
       status: 200,
-      body: recipes,
+      body: recipe,
     }
   } catch (err) {
     console.error(err);

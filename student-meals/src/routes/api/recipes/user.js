@@ -4,6 +4,7 @@ const prisma = new PrismaClient();
 /** @type {import("./__types/user").RequestHandler} */
 export async function GET({ request }) {
   try {
+    //console.log(request);
     const recipes = await prisma.recipe.findMany({
       where: {
         userId: request.headers.get("userId") || "",

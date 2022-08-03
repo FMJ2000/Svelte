@@ -1,6 +1,13 @@
-/** @type {import('@sveltejs/kit').GetSession} */
-export function getSession(event) {
+import cookie from "cookie";
+
+export async function handle({ event, resolve }) {
+  const cookies = cookie.parse(event.request.headers.get("cookie") || "");
+  event.locals.token = cookies.token;
+  return await resolve(event);
+}
+
+export function getSession({ locals }) {
   return {
-    user: event.locals.user
-  }
+    token: locals.token,
+  };
 }
