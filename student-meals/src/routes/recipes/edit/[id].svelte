@@ -1,8 +1,8 @@
 <script>
-import RecipeView from "$lib/components/RecipeView.svelte";
+import RecipeEdit from "$lib/components/RecipeEdit.svelte";
 
 /** @type {import("$lib/global").Recipe} */
 export let recipe;
 </script>
 
-<RecipeView {recipe} />
+<RecipeEdit {recipe} />

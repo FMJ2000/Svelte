@@ -6,7 +6,7 @@ import { user } from "$lib/stores";
 
   /** @param {import("$lib/global").Recipe} recipe */
   function ago(recipe) {
-    let diff = ((Date.now() - Date.parse(recipe.createdAt || new Date())) / 1000) >> 0;
+    let diff = ((Date.now() - Date.parse(recipe.createdAt || new Date().toISOString())) / 1000) >> 0;
     if (diff < 60) return `${diff} seconds ago`;
     diff = (diff / 60) >> 0;
     if (diff < 60) return `${diff} minutes ago`;
@@ -52,10 +52,10 @@ import { user } from "$lib/stores";
             </div>
             <div class="ms-auto">
               <small class="d-block">{ago(recipe)}</small>
-              {#if recipe.userId === $user.id}
-              <button class="btn btn-sm btn-outline-secondary ms-auto my-1" on:click={() => deleteRecipe(recipe)}>
-                <i class="fa-solid fa-gear" />
-              </button>
+              {#if recipe.userId === $user?.id}
+                <a class="btn btn-sm btn-outline-secondary ms-auto my-1" href="/recipes/edit/{recipe.id}">
+                  <i class="fa-solid fa-gear" />
+                </a>
                 <button class="btn btn-sm btn-outline-danger ms-auto my-1" on:click={() => deleteRecipe(recipe)}>
                   <i class="fa-solid fa-trash" />
                 </button>

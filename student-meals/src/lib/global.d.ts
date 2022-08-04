@@ -30,7 +30,7 @@ export type Ingredient = {
   id?: string,
   name: string,
   amount: number,
-  unit: "ml" | "g" | "p",
+  unit: string,
 };
 
 export type Rating = {
