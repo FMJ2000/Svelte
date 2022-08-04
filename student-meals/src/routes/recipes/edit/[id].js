@@ -1,5 +1,4 @@
-import { PrismaClient } from "@prisma/client";
-const prisma = new PrismaClient();
+import { prisma } from "$lib/util";
 
 /** @type {import("./__types/[id]").RequestHandler} */
 export async function GET({ params }) {
@@ -14,7 +13,7 @@ export async function GET({ params }) {
           name: true,
           amount: true,
           unit: true,
-        },
+        }
       },
       steps: {
         select: {
@@ -30,3 +29,4 @@ export async function GET({ params }) {
     body: { recipe },
   };
 }
+

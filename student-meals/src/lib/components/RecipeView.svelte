@@ -10,8 +10,15 @@ $: progress = recipe.steps.filter((step) => step.complete).length / recipe.steps
   <div class="col-md-8">
     <div class="card m-1 shadow-sm">
       <div class="card-body">
-        <h3 class="card-title">{recipe.name}</h3>
-        <p class="card-subtitle mb-2 text-muted">{recipe.description}</p>
+        <div class="d-flex mb-2">
+          <div>
+            <img src={recipe.picture} alt="recipe" class="rounded">
+          </div>
+          <div class="ms-2 flex-grow-1">
+            <h3 class="card-title">{recipe.name}</h3>
+            <p class="card-subtitle mb-2 text-muted">{recipe.description}</p>
+          </div>
+        </div>
       </div>
     </div>
     <div class="card m-1 shadow-sm">
@@ -25,7 +32,7 @@ $: progress = recipe.steps.filter((step) => step.complete).length / recipe.steps
             <li class="list-group-item d-flex">
               <span class="mx-2 me-auto">{step.description}</span>
               {#if step.duration > 1} <span class="text-muted me-2">{step.duration} min</span> {/if}
-              <button class="btn btn-sm btn-outline-success" on:click={() => step.complete = !step.complete}>
+              <button class="btn btn-sm {step.complete ? "btn-outline-success" : "btn-outline-secondary"}" on:click={() => step.complete = !step.complete}>
                 <i class="fa-solid {step.complete ? "fa-circle-xmark" : "fa-circle-check"}" />
               </button>
             </li>

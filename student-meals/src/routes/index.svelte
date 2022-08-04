@@ -1,1 +1,1 @@
-hello
+<a href="/recipes">View recipes</a>

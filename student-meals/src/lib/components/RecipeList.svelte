@@ -20,54 +20,53 @@ import { user } from "$lib/stores";
   /** @param {import("$lib/global").Recipe} recipe */
   async function deleteRecipe(recipe) {
     if (confirm("Are you sure you want to delete the recipe?")) {
-      await fetch("api/recipe", {
+      const response = await fetch(`/api/recipes/${recipe.id}`, {
         method: "DELETE",
-        body: JSON.stringify(recipe),
       });
-      location.reload();
+      recipes = await response.json();
     }
   }
 </script>
 
-
-<div class="card shadow-sm">
-  <div class="card-body">
-    <h5 class="card-title">Recipes</h5>
-    <div class="list-group list-group-flush ">
-      {#if recipes.length === 0}
-        <li class="list-group-item">No recipes yet - click <a href="/user/recipes/create">here</a> to add one!</li>
-      {/if}
-      {#each recipes as recipe}
-        <li class="list-group-item">
-          <div class="d-flex">
-            <img src={recipe.picture} alt="recipe" class="rounded">
-            <div class="mx-2">
-              <a href="/recipes/{recipe.id}" class="fs-5">{recipe.name}</a>
-              <p class="mb-0">{recipe.description}</p>
-              <small>
-                {recipe.steps?.length} steps 
-                <i class="fa-solid fa-clock ms-3" />
-                {recipe.steps?.map((step) => step.duration).reduce((a, b) => a + b)} min
-              </small>
+<div class="container p-2">
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <h5 class="card-title">Recipes</h5>
+      <div class="list-group list-group-flush ">
+        {#if recipes.length === 0}
+          <li class="list-group-item">No recipes yet - click <a href="/user/recipes/create">here</a> to add one!</li>
+        {/if}
+        {#each recipes as recipe}
+          <li class="list-group-item">
+            <div class="d-flex">
+              <img src={recipe.picture} alt="recipe" class="rounded">
+              <div class="mx-2">
+                <a href="/recipes/{recipe.id}" class="fs-5">{recipe.name}</a>
+                <p class="mb-0">{recipe.description}</p>
+                <small>
+                  {recipe.steps?.length} steps 
+                  <i class="fa-solid fa-clock ms-3" />
+                  {recipe.steps?.map((step) => step.duration).reduce((a, b) => a + b)} min
+                </small>
+              </div>
+              <div class="ms-auto">
+                <small class="d-block">{ago(recipe)}</small>
+                {#if recipe.userId === $user?.id}
+                  <a class="btn btn-sm btn-outline-secondary ms-auto my-1" href="/recipes/edit/{recipe.id}">
+                    <i class="fa-solid fa-gear" />
+                  </a>
+                  <button class="btn btn-sm btn-outline-danger ms-auto my-1" on:click={() => deleteRecipe(recipe)}>
+                    <i class="fa-solid fa-trash" />
+                  </button>
+                {/if}
+              </div>
             </div>
-            <div class="ms-auto">
-              <small class="d-block">{ago(recipe)}</small>
-              {#if recipe.userId === $user?.id}
-                <a class="btn btn-sm btn-outline-secondary ms-auto my-1" href="/recipes/edit/{recipe.id}">
-                  <i class="fa-solid fa-gear" />
-                </a>
-                <button class="btn btn-sm btn-outline-danger ms-auto my-1" on:click={() => deleteRecipe(recipe)}>
-                  <i class="fa-solid fa-trash" />
-                </button>
-              {/if}
-            </div>
-          </div>
-        </li>
-      {/each}
+          </li>
+        {/each}
+      </div>
     </div>
   </div>
 </div>
-  
 
 <style>
   a.fs-5 {

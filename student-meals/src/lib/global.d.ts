@@ -21,6 +21,7 @@ export type Recipe = {
 
 export type Step = {
   index?: number,
+  recipeId?: string,
   description: string,
   duration: number,
   complete?: boolean,
@@ -28,6 +29,7 @@ export type Step = {
 
 export type Ingredient = {
   id?: string,
+  recipeId?: string,
   name: string,
   amount: number,
   unit: string,

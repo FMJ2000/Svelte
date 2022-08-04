@@ -1,11 +1,11 @@
 <script>
-  import { page } from "$app/stores";
-  import { user } from "$lib/stores";
+import { page } from "$app/stores";
+import { user } from "$lib/stores";
 
-  /** @type {() => Promise<void>} */
-  export let login;
-  /** @type {() => Promise<void>} */
-  export let logout;
+/** @type {() => Promise<void>} */
+export let login;
+/** @type {() => Promise<void>} */
+export let logout;
 </script>
 
 <svelte:head>
@@ -23,13 +23,13 @@
         {#if $user}
           <ul class="navbar-nav">
             <li class="nav-item">
-              <a class="nav-link" class:active={$page.url.pathname === "/"} href="/">Home</a>
+              <a class="nav-link" class:active={$page.url.pathname === "/recipes"} href="/recipes">Home</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" class:active={$page.url.pathname === "/recipes/user"} href="/recipes/user">My Recipes</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" class:active={$page.url.pathname === "/recipes/create"} href="/recipes/create">Create</a>
+              <a class="nav-link" class:active={$page.url.pathname === "/recipes/edit"} href="/recipes/edit">Create</a>
             </li>
           </ul>
         {/if}

@@ -1,7 +1,8 @@
+import { getCookie } from "$lib/util";
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
-/** @type {import("./__types/recipe").RequestHandler} */
+/** @type {import("./__types/index").RequestHandler} */
 export async function POST({ request }) {
   /** @type {any} */
   const data = await request.json();
@@ -17,21 +18,6 @@ export async function POST({ request }) {
   });
   return {
     status: 200,
-    body: { recipe },
+    body: recipe,
   };
 }
-
-/** @type {import("./__types/recipe").RequestHandler} */
-export async function DELETE({ request }) {
-  /** @type {any} */
-  const data = await request.json();
-  const recipes = await prisma.recipe.delete({
-    where: {
-      id: data.id,
-    },
-  });
-  return {
-    status: 200,
-  };
-}
-

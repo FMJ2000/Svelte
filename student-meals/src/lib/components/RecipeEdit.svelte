@@ -1,11 +1,14 @@
 <script>
+import { page } from "$app/stores";
+
 /** @type {import("$lib/global").Recipe} */
 export let recipe;
 
 /** @type {Promise<Response> | null} */
 let submit;
 function handleSubmit() {
-  submit = fetch("/recipes/edit", {
+  const url = recipe.id ? `/api/recipes/${recipe.id}` : "/api/recipes";
+  submit = fetch(url, {
     method: "POST",
     body: JSON.stringify({
       ...recipe,
@@ -21,7 +24,7 @@ function addStep(index) {
   if (recipe.steps.length-1 === index) {
     recipe.steps = [...recipe.steps, {
       description: "",
-      duration: 1.0,
+      duration: 0.0,
     }];
   }
 }
@@ -46,7 +49,7 @@ function addIngredient(index) {
           <div>
             <img src={recipe.picture} alt="recipe" class="rounded">
           </div>
-          <div class="mx-2 flex-grow-1 row">
+          <div class="ms-2 flex-grow-1">
             <div class="card-title">
               <label class="visually-hidden" for="name">Recipe name</label>
               <input class="form-control-plaintext form-control-lg bg-light px-1" type="text" id="name" placeholder="Recipe name" bind:value={recipe.name} required>
@@ -67,10 +70,10 @@ function addIngredient(index) {
               <div class="input-group">
                 <input class="form-control form-control-plaintext bg-light px-1" id={`in${recipe.ingredients.indexOf(ingredient)}`} type="text" placeholder="Name" bind:value={ingredient.name} on:input={() => addIngredient(recipe.ingredients.indexOf(ingredient))}>
                 <input class="form-control form-control-plaintext bg-light flex-grow-0" style="min-width:3rem;" type="number" placeholder="Amount" bind:value={ingredient.amount} min="0">
-                <select class="form-select bg-light flex-grow-0 me-4" style="min-width:3rem;" aria-label="Unit" bind:value={ingredient.unit}>
-                  <option selected value="ml">ml</option>
-                  <option selected value="g">g</option>
-                  <option selected value="p">p</option>
+                <select class="form-select bg-light flex-grow-0 me-4 ps-1" style="min-width:6rem;" aria-label="Unit" bind:value={ingredient.unit}>
+                  <option selected value="ml">milliliter</option>
+                  <option selected value="g">gram</option>
+                  <option selected value="p">piece</option>
                 </select>
               </div>
               <div class="my-auto">
@@ -123,7 +126,7 @@ function addIngredient(index) {
         {#await submit}
           <div class="modal-body">Saving...</div>
         {:then res}
-          <div class="modal-body">Saved!</div>
+          <div class="modal-body">Recipe saved!</div>
           <div class="modal-footer">
             <a class="btn btn-primary" data-bs-dismiss="modal" href="/">Continue</a>
           </div>
